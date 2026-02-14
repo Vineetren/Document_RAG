@@ -58,8 +58,8 @@ Create a `.env` file:
 OPENAI_API_KEY=your_api_key_here
 OPENAI_BASE_URL=https://openrouter.ai/api/v1
 CHAT_MODEL=meta-llama/llama-3.1-8b-instruct
-AUTH_USERNAME=admin
-AUTH_PASSWORD=demo123
+AUTH_USERNAME=your_username
+AUTH_PASSWORD=your_password
 ```
 
 4. **Run database migration** (if upgrading from older version)
@@ -74,10 +74,6 @@ uvicorn app.main:app --reload
 
 6. **Access the application**
 Open browser to: `http://localhost:8000`
-
-Default credentials:
-- Username: `admin`
-- Password: `demo123`
 
 ## Project Structure
 
