@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RAG Assistant</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/auth.css">
+    <script>
+        // Load theme immediately to prevent flash
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-mode');
+        }
+    </script>
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="theme-toggle-fixed" onclick="toggleLoginTheme()" title="Toggle Theme">
+    <i class="ph-fill ph-moon"></i>
+</button>
+
+<div class="auth-wrapper">
+    
+    <div class="glow-orb"></div>
+
+    <div class="auth-card">
+        
+        <div class="auth-header">
+            <div class="logo-icon-large">
+                <i class="ph-fill ph-stack-overflow"></i>
+            </div>
+            <h2 id="formTitle">Welcome to RAG Assistant</h2>
+            <p class="sub-text">Enter your details to access your workspace.</p>
+        </div>
+
+        <div class="auth-toggle" style="display: none;">
+            <button class="toggle-btn active" onclick="switchMode('login')">Sign In</button>
+            <button class="toggle-btn" onclick="switchMode('signup')">Sign Up</button>
+        </div>
+
+        <form id="authForm" onsubmit="handleAuth(event)">
+            
+            <div class="input-group hidden" id="nameGroup">
+                <label>Full Name</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-user"></i>
+                    <input type="text" id="nameInput" placeholder="John Doe">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Username</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-user"></i>
+                    <input type="text" id="emailInput" placeholder="Username">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-lock-key"></i>
+                    <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="new-password">
+                    <i class="ph ph-eye toggle-password" id="togglePassword" title="Show password"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Sign In <i class="ph-bold ph-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="divider" style="display: none;">
+            <span>OR CONTINUE WITH</span>
+        </div>
+
+        <div class="social-login" style="display: none;">
+            <button class="social-btn">
+                <i class="ph-fill ph-google-logo"></i> Google
+            </button>
+            <button class="social-btn">
+                <i class="ph-fill ph-github-logo"></i> GitHub
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Load saved theme on page load
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        const icon = document.querySelector('.theme-toggle-fixed i');
+        if (icon) icon.classList.replace('ph-moon', 'ph-sun');
+    }
+
+    // NEW: Theme Toggle Logic
+    function toggleLoginTheme() {
+        document.body.classList.toggle("light-mode");
+        const isLight = document.body.classList.contains("light-mode");
+        const icon = document.querySelector(".theme-toggle-fixed i");
+        
+        // Save preference
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        
+        if (isLight) {
+            icon.classList.replace("ph-moon", "ph-sun");
+        } else {
+            icon.classList.replace("ph-sun", "ph-moon");
+        }
+    }
+
+    // Password visibility toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('passwordInput');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        this.classList.toggle('ph-eye');
+        this.classList.toggle('ph-eye-slash');
+    });
+
+    // State management
+    let isLogin = true;
+
+    // Toggle between Login and Signup modes
+    function switchMode(mode) {
+        isLogin = mode === 'login';
+        
+        // Update UI
+        const buttons = document.querySelectorAll('.toggle-btn');
+        const title = document.getElementById('formTitle');
+        const nameGroup = document.getElementById('nameGroup');
+        const forgotPass = document.getElementById('forgotPass');
+        const btn = document.getElementById('submitBtn');
+
+        if (isLogin) {
+            buttons[0].classList.add('active');
+            buttons[1].classList.remove('active');
+            title.innerText = "Welcome back";
+            nameGroup.classList.add('hidden');
+            document.getElementById('nameInput').required = false;
+            if(forgotPass) forgotPass.style.display = 'block';
+            btn.innerHTML = `Sign In <i class="ph-bold ph-arrow-right"></i>`;
+        } else {
+            buttons[0].classList.remove('active');
+            buttons[1].classList.add('active');
+            title.innerText = "Create an account";
+            nameGroup.classList.remove('hidden');
+            document.getElementById('nameInput').required = true;
+            if(forgotPass) forgotPass.style.display = 'none';
+            btn.innerHTML = `Get Started <i class="ph-bold ph-arrow-right"></i>`;
+        }
+    }
+
+    // Handle Form Submission
+    async function handleAuth(e) {
+        e.preventDefault();
+
+        const email = document.getElementById('emailInput').value.trim();
+        const password = document.getElementById('passwordInput').value;
+        const btn = document.getElementById('submitBtn');
+        const originalText = btn.innerHTML;
+
+        // Validation
+        if (!email) {
+            showError('Please enter your username');
+            return;
+        }
+        if (!password) {
+            showError('Please enter your password');
+            return;
+        }
+
+        // Visual Loading State
+        btn.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Processing...`;
+        btn.disabled = true;
+
+        try {
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+
+            const response = await fetch('/login', {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Success - Redirect and prevent back button
+                window.location.replace("/");
+            } else {
+                // Error
+                showError(data.detail || "Invalid username or password");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            showError("Invalid username or password");
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    // Show error notification
+    function showError(message) {
+        const existing = document.querySelector('.error-toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'error-toast';
+        toast.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #ef4444; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; animation: slideIn 0.3s ease;';
+        toast.innerHTML = `<i class="ph-fill ph-warning-circle"></i> ${message}`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>

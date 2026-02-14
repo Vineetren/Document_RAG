@@ -1,0 +1,358 @@
+/* --- Variables (Dark Mode Default) --- */
+:root {
+    --bg-app: #09090b;
+    --surface: rgba(24, 24, 27, 0.7); /* Glassy Dark */
+    --border: #27272a;
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --text-main: #e4e4e7;
+    --text-muted: #a1a1aa;
+    --input-bg: #0f0f11;
+    --toggle-bg: #121214;
+    --glow-color: rgba(99, 102, 241, 0.25);
+    --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Light Mode Overrides --- */
+body.light-mode {
+    --bg-app: #f8fafc;        /* Light Slate Gray */
+    --surface: rgba(255, 255, 255, 0.85); /* Glassy White */
+    --border: #cbd5e1;
+    --primary: #4f46e5;       
+    --primary-hover: #4338ca;
+    --text-main: #0f172a;     /* Very Dark Slate */
+    --text-muted: #64748b;
+    --input-bg: #ffffff;
+    --toggle-bg: #e2e8f0;
+    --glow-color: rgba(99, 102, 241, 0.15);
+    --shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1); 
+}
+
+/* --- Global Styles --- */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.auth-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+/* Background Glow */
+.glow-orb {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, var(--glow-color) 0%, rgba(0, 0, 0, 0) 70%);
+    filter: blur(80px);
+    z-index: -1;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+/* Glass Card */
+.auth-card {
+    background: var(--surface);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+    transition: 0.3s;
+}
+
+/* Header */
+.auth-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.logo-icon-large {
+    font-size: 36px;
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: inline-block;
+}
+
+.auth-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.auth-header p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* Toggle Switch */
+.auth-toggle {
+    display: flex;
+    background: var(--toggle-bg);
+    padding: 4px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+}
+
+.toggle-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.toggle-btn.active {
+    background: var(--bg-app);
+    color: var(--text-main);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid var(--border);
+}
+
+/* Input Fields */
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    color: var(--text-muted);
+    font-size: 16px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.input-wrapper i:first-of-type {
+    left: 14px;
+}
+
+.input-wrapper .toggle-password {
+    left: auto;
+    right: 12px;
+    pointer-events: auto;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 2;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.input-wrapper input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 12px 45px 12px 40px; /* More space on right for eye icon */
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+}
+
+/* Hide browser's native password reveal icon - comprehensive fix */
+.input-wrapper input[type="password"]::-ms-reveal,
+.input-wrapper input[type="password"]::-ms-clear {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.input-wrapper input[type="text"]::-ms-reveal,
+.input-wrapper input[type="text"]::-ms-clear {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Hide Edge/Chrome password reveal */
+.input-wrapper input::-webkit-credentials-auto-fill-button,
+.input-wrapper input::-webkit-textfield-decoration-container > div {
+    visibility: hidden !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    right: 0 !important;
+    display: none !important;
+}
+
+/* Additional fix for Chromium browsers */
+.input-wrapper input[type="password"]::-webkit-textfield-decoration-container,
+.input-wrapper input[type="text"]::-webkit-textfield-decoration-container {
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+}
+
+/* Fix autofill background color */
+.input-wrapper input:-webkit-autofill,
+.input-wrapper input:-webkit-autofill:hover,
+.input-wrapper input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--text-main);
+    -webkit-box-shadow: 0 0 0px 1000px var(--input-bg) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.hidden {
+    display: none;
+}
+
+/* Actions & Buttons */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.forgot-pass {
+    font-size: 12px;
+    color: var(--primary);
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.forgot-pass:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    transition: 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Divider & Social */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+    color: var(--border);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.divider span {
+    padding: 0 10px;
+    color: var(--text-muted);
+}
+
+.social-login {
+    display: flex;
+    gap: 12px;
+}
+
+.social-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.social-btn:hover {
+    background: var(--input-bg);
+    border-color: var(--text-muted);
+}
+
+/* --- Theme Toggle Button (Top Right) --- */
+.theme-toggle-fixed {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+}
+.theme-toggle-fixed:hover {
+    color: var(--text-main);
+    transform: scale(1.1);
+    border-color: var(--primary);
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Assistant</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        // Load theme immediately to prevent flash
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-mode');
+        }
+    </script>
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="ph-fill ph-stack-overflow logo-icon"></i>
+            <span class="logo-text">RAG Assistant</span>
+        </div>
+
+        <div class="upload-zone" id="dropZone">
+            <input type="file" id="fileInput" hidden accept=".txt">
+            <div class="upload-content">
+                <i class="ph ph-cloud-arrow-up"></i>
+                <p><strong>Click to upload</strong> or drag & drop</p>
+                <span class="sub-text">TXT files only</span>
+            </div>
+        </div>
+
+        <div class="sidebar-label">DOCUMENTS</div>
+        
+        <div id="docList" class="file-list">
+            </div>
+
+        <div class="sidebar-footer">
+            <button onclick="window.location.href='/status-page'" class="theme-btn" title="System Status" style="margin-right: 8px;">
+                <i class="ph-fill ph-pulse"></i>
+            </button>
+            <button onclick="logout()" class="theme-btn" title="Logout" style="margin-right: 8px;">
+                <i class="ph-fill ph-sign-out"></i>
+            </button>
+            <button onclick="toggleTheme()" class="theme-btn" title="Toggle Theme">
+                <i class="ph-fill ph-moon"></i>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <div class="chat-feed" id="chatBox">
+            <div class="message bot intro">
+                <div class="message-content">
+                    Hello! Upload a document to the left and ask me anything about it.
+                </div>
+            </div>
+        </div>
+
+        <div class="input-wrapper">
+            <div class="input-container">
+                <input type="text" id="questionInput" placeholder="Ask a question about your documents..." autocomplete="off">
+                <button onclick="askQuestion()" id="sendBtn">
+                    <i class="ph-fill ph-paper-plane-right"></i>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
