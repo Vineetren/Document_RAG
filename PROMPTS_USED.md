@@ -185,23 +185,6 @@ Mark your response with [CASUAL] or [DOCUMENT] tags.
 Create a migration script that adds user_id column to existing documents and chat_history tables without losing data. Set default value to 'default' for existing records.
 ```
 
-## Documentation
-
-### README Creation
-```
-Create a comprehensive README with:
-1. Setup instructions
-2. Features implemented and not implemented
-3. Project structure
-4. API endpoints
-5. Technology stack
-```
-
-### AI Notes Documentation
-```
-Document what AI was used for, what was manually checked, and why specific LLM models were chosen (OpenRouter, GPT-4o-mini, text-embedding-3-small).
-```
-
 ## Testing Prompts
 
 Throughout development, various testing scenarios were explored:
