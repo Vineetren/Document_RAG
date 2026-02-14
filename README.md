@@ -2,6 +2,9 @@
 
 A Retrieval-Augmented Generation (RAG) application that allows users to upload documents and ask questions about them using AI.
 
+
+## Access URL: https://document-rag-aa91.onrender.com/
+
 ## Features Implemented ✅
 
 ### Core Functionality
