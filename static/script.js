@@ -60,7 +60,7 @@ async function uploadDoc() {
     dropZone.querySelector("p").innerText = "Uploading...";
 
     try {
-        const response = await fetch("/upload", {
+        const response = await fetch("/api/upload", {
             method: "POST",
             body: formData
         });
@@ -82,7 +82,7 @@ async function uploadDoc() {
 // Load Documents
 async function loadDocuments() {
     try {
-        const response = await fetch("/documents");
+        const response = await fetch("/api/documents");
         const data = await response.json();
         const docs = data.documents || data;
         const list = document.getElementById("docList");
@@ -149,7 +149,7 @@ async function deleteDoc(docId) {
     // Handle confirm
     modal.querySelector('#confirmBtn').onclick = async () => {
         modal.remove();
-        await fetch(`/documents/${docId}`, { method: "DELETE" });
+        await fetch(`/api/documents/${docId}`, { method: "DELETE" });
         loadDocuments();
     };
 }
@@ -161,7 +161,7 @@ async function askQuestion() {
     if (!question) return;
 
     // Check if documents exist
-    const response = await fetch("/documents");
+    const response = await fetch("/api/documents");
     const data = await response.json();
     if (!data.documents || data.documents.length === 0) {
         showWarning("Please upload a document first before asking questions.");
@@ -197,7 +197,7 @@ async function askQuestion() {
     scrollToBottom();
 
     try {
-        const response = await fetch("/ask", {
+        const response = await fetch("/api/ask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ question })
@@ -349,7 +349,7 @@ if (localStorage.getItem('theme') === 'light') {
 // Load chat history from database
 async function loadChatHistory() {
     try {
-        const response = await fetch('/chat-history');
+        const response = await fetch('/api/chat-history');
         const data = await response.json();
         const chatBox = document.getElementById('chatBox');
         

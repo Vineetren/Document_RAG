@@ -7,9 +7,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 import os
 import secrets
 
-from app.database import init_db
+from app.database import init_db, verify_user, create_user
 from app.routes import upload, ask, status as status_route, documents, chat_history
-from app.config import UPLOAD_DIR, AUTH_USERNAME, AUTH_PASSWORD
+from app.config import UPLOAD_DIR
 
 app = FastAPI(title="Document RAG Assistant")
 
@@ -23,13 +23,15 @@ init_db()
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         # Public paths
-        if request.url.path in ["/login", "/static"] or request.url.path.startswith("/static/"):
+        if request.url.path in ["/login", "/signup", "/static"] or request.url.path.startswith("/static/"):
             return await call_next(request)
         
         # Check authentication
         if not request.session.get("authenticated"):
+            # If it's an API call or a non-GET request, return 401
             if request.url.path.startswith("/api/") or request.method in ["POST", "DELETE", "PUT"]:
                 return JSONResponse({"detail": "Not authenticated"}, status_code=401)
+            # For browser navigation, redirect to login
             return RedirectResponse(url="/login", status_code=302)
         
         return await call_next(request)
@@ -38,12 +40,12 @@ class AuthMiddleware(BaseHTTPMiddleware):
 app.add_middleware(AuthMiddleware)
 app.add_middleware(SessionMiddleware, secret_key=secrets.token_hex(32))
 
-# Include API routes
-app.include_router(upload.router)
-app.include_router(ask.router)
-app.include_router(status_route.router)
-app.include_router(documents.router)
-app.include_router(chat_history.router)
+# Include API routes with /api prefix
+app.include_router(upload.router, prefix="/api")
+app.include_router(ask.router, prefix="/api")
+app.include_router(status_route.router, prefix="/api")
+app.include_router(documents.router, prefix="/api")
+app.include_router(chat_history.router, prefix="/api")
 
 # Mount static files (CSS / JS if needed)
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -61,11 +63,24 @@ def login_page(request: Request):
 # Login handler
 @app.post("/login")
 async def login(request: Request, email: str = Form(...), password: str = Form(...)):
-    if email == AUTH_USERNAME and password == AUTH_PASSWORD:
+    user = verify_user(email, password)
+    if user:
         request.session["authenticated"] = True
-        request.session["user_id"] = email
+        request.session["user_id"] = user["id"]
+        request.session["user_email"] = user["email"]
         return {"success": True}
     raise HTTPException(status_code=401, detail="Invalid credentials")
+
+# Signup handler
+@app.post("/signup")
+async def signup(request: Request, email: str = Form(...), password: str = Form(...), name: str = Form(None)):
+    if create_user(email, password, name):
+        # Automatically log in after signup
+        request.session["authenticated"] = True
+        request.session["user_id"] = email
+        request.session["user_email"] = email
+        return {"success": True}
+    raise HTTPException(status_code=400, detail="User already exists")
 
 # Logout
 @app.get("/logout")

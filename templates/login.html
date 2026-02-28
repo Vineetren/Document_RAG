@@ -49,7 +49,7 @@
             <p class="sub-text">Enter your details to access your workspace.</p>
         </div>
 
-        <div class="auth-toggle" style="display: none;">
+        <div class="auth-toggle">
             <button class="toggle-btn active" onclick="switchMode('login')">Sign In</button>
             <button class="toggle-btn" onclick="switchMode('signup')">Sign Up</button>
         </div>
@@ -65,7 +65,7 @@
             </div>
 
             <div class="input-group">
-                <label>Username</label>
+                <label>Username (Email)</label>
                 <div class="input-wrapper">
                     <i class="ph ph-user"></i>
                     <input type="text" id="emailInput" placeholder="Username">
@@ -148,7 +148,6 @@
         const buttons = document.querySelectorAll('.toggle-btn');
         const title = document.getElementById('formTitle');
         const nameGroup = document.getElementById('nameGroup');
-        const forgotPass = document.getElementById('forgotPass');
         const btn = document.getElementById('submitBtn');
 
         if (isLogin) {
@@ -157,7 +156,6 @@
             title.innerText = "Welcome back";
             nameGroup.classList.add('hidden');
             document.getElementById('nameInput').required = false;
-            if(forgotPass) forgotPass.style.display = 'block';
             btn.innerHTML = `Sign In <i class="ph-bold ph-arrow-right"></i>`;
         } else {
             buttons[0].classList.remove('active');
@@ -165,7 +163,6 @@
             title.innerText = "Create an account";
             nameGroup.classList.remove('hidden');
             document.getElementById('nameInput').required = true;
-            if(forgotPass) forgotPass.style.display = 'none';
             btn.innerHTML = `Get Started <i class="ph-bold ph-arrow-right"></i>`;
         }
     }
@@ -176,6 +173,7 @@
 
         const email = document.getElementById('emailInput').value.trim();
         const password = document.getElementById('passwordInput').value;
+        const name = document.getElementById('nameInput').value.trim();
         const btn = document.getElementById('submitBtn');
         const originalText = btn.innerHTML;
 
@@ -197,8 +195,12 @@
             const formData = new FormData();
             formData.append('email', email);
             formData.append('password', password);
+            if (!isLogin && name) {
+                formData.append('name', name);
+            }
 
-            const response = await fetch('/login', {
+            const endpoint = isLogin ? '/login' : '/signup';
+            const response = await fetch(endpoint, {
                 method: "POST",
                 body: formData
             });
@@ -210,13 +212,13 @@
                 window.location.replace("/");
             } else {
                 // Error
-                showError(data.detail || "Invalid username or password");
+                showError(data.detail || "Authentication failed");
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         } catch (error) {
             console.error("Error:", error);
-            showError("Invalid username or password");
+            showError("An error occurred. Please try again.");
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
